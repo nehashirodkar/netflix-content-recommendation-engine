@@ -52,6 +52,7 @@ def init_wandb(disabled: bool):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--skip-preprocess", action="store_true", help="Reuse existing processed parquets")
+    parser.add_argument("--skip-train", action="store_true", help="Load existing model checkpoints instead of training")
     parser.add_argument("--no-wandb", action="store_true")
     parser.add_argument("--push-hf", action="store_true", help="Push trained models to Hugging Face Hub")
     parser.add_argument("--eval-users", type=int, default=config.EVAL_USERS_SAMPLE)
@@ -74,29 +75,41 @@ def main():
 
     wandb_run = init_wandb(args.no_wandb)
 
-    # SVD
-    print("\n=== Training SVD ===")
-    t0 = time.time()
-    svd_model = train_svd(train, val, n_users, n_items, device=device, wandb_run=wandb_run)
-    svd_time = time.time() - t0
-    svd_model.save(config.SVD_MODEL_PATH)
-    print(f"SVD saved to {config.SVD_MODEL_PATH} ({svd_time:.1f}s)")
+    if args.skip_train and config.SVD_MODEL_PATH.exists():
+        print("\n=== Loading existing SVD checkpoint ===")
+        svd_model = SVDModel.load(config.SVD_MODEL_PATH).to(device)
+        svd_time = 0.0
+    else:
+        print("\n=== Training SVD ===")
+        t0 = time.time()
+        svd_model = train_svd(train, val, n_users, n_items, device=device, wandb_run=wandb_run)
+        svd_time = time.time() - t0
+        svd_model.save(config.SVD_MODEL_PATH)
+        print(f"SVD saved to {config.SVD_MODEL_PATH} ({svd_time:.1f}s)")
 
-    # NCF
-    print("\n=== Training NCF ===")
-    t0 = time.time()
-    ncf_model = train_ncf(train, val, n_users, n_items, device=device, wandb_run=wandb_run)
-    ncf_time = time.time() - t0
-    ncf_model.save(config.NCF_MODEL_PATH)
-    print(f"NCF saved to {config.NCF_MODEL_PATH} ({ncf_time:.1f}s)")
+    if args.skip_train and config.NCF_MODEL_PATH.exists():
+        print("\n=== Loading existing NCF checkpoint ===")
+        ncf_model = NCFModel.load(config.NCF_MODEL_PATH).to(device)
+        ncf_time = 0.0
+    else:
+        print("\n=== Training NCF ===")
+        t0 = time.time()
+        ncf_model = train_ncf(train, val, n_users, n_items, device=device, wandb_run=wandb_run)
+        ncf_time = time.time() - t0
+        ncf_model.save(config.NCF_MODEL_PATH)
+        print(f"NCF saved to {config.NCF_MODEL_PATH} ({ncf_time:.1f}s)")
 
-    # Content
-    print("\n=== Fitting Content (TF-IDF) ===")
-    t0 = time.time()
-    content_model = ContentModel().fit(movies)
-    content_time = time.time() - t0
-    content_model.save(config.CONTENT_MODEL_PATH)
-    print(f"Content saved to {config.CONTENT_MODEL_PATH} ({content_time:.1f}s)")
+    if args.skip_train and config.CONTENT_MODEL_PATH.exists():
+        print("\n=== Loading existing Content checkpoint ===")
+        content_model = ContentModel.load(config.CONTENT_MODEL_PATH)
+        content_time = 0.0
+    else:
+        print("\n=== Fitting Content (TF-IDF) ===")
+        t0 = time.time()
+        content_model = ContentModel().fit(movies)
+        content_time = time.time() - t0
+        content_model.save(config.CONTENT_MODEL_PATH)
+        print(f"Content saved to {config.CONTENT_MODEL_PATH} ({content_time:.1f}s)")
 
     # Evaluate — RMSE on test for SVD; ranking metrics for SVD/NCF/Content/Hybrid
     print("\n=== Evaluating ===")

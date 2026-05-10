@@ -49,9 +49,8 @@ class ContentModel:
                 rows.append(index_map[item_idx])
         if not rows:
             return self.popular_items(top_k)
-        user_profile = self.tfidf_matrix[rows].mean(axis=0)
-        user_profile = np.asarray(user_profile)
-        sims = (self.tfidf_matrix @ user_profile.T).A.flatten()
+        user_profile = np.asarray(self.tfidf_matrix[rows].mean(axis=0))
+        sims = np.asarray(self.tfidf_matrix @ user_profile.T).ravel()
         seen = set(rows)
         for r in seen:
             sims[r] = -np.inf
@@ -71,8 +70,8 @@ class ContentModel:
         rows = [index_map[i] for i in user_history_item_idxs if i in index_map]
         if not rows:
             return np.zeros(len(self.item_indices), dtype=np.float32)
-        user_profile = self.tfidf_matrix[rows].mean(axis=0)
-        sims = (self.tfidf_matrix @ np.asarray(user_profile).T).A.flatten()
+        user_profile = np.asarray(self.tfidf_matrix[rows].mean(axis=0))
+        sims = np.asarray(self.tfidf_matrix @ user_profile.T).ravel()
         return sims.astype(np.float32)
 
     def save(self, path: Path):

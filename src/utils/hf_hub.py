@@ -21,14 +21,15 @@ def ensure_repo(repo_id: str | None = None) -> str:
 def push_models(repo_id: str | None = None, commit_message: str = "Update models"):
     repo_id = ensure_repo(repo_id)
     api = _api()
+    # All files should live in MODELS_DIR by now (train_all copies indices/movies in)
     files = [
         config.SVD_MODEL_PATH,
         config.NCF_MODEL_PATH,
         config.CONTENT_MODEL_PATH,
         config.METADATA_PATH,
-        config.USER_INDEX_PATH,
-        config.ITEM_INDEX_PATH,
-        config.MOVIES_PARQUET,
+        config.MODELS_DIR / "user_index.json",
+        config.MODELS_DIR / "item_index.json",
+        config.MODELS_DIR / "movies.parquet",
     ]
     for f in files:
         if not f.exists():

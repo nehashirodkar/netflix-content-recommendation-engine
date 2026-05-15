@@ -189,6 +189,15 @@ def main():
         json.dump(metadata, f, indent=2)
     print(f"Metadata saved to {config.METADATA_PATH}")
 
+    # Copy index + movies files into models/ so the Recommender can find them locally
+    # (they get pushed to HF Hub from there too)
+    import shutil
+    for src in [config.USER_INDEX_PATH, config.ITEM_INDEX_PATH, config.MOVIES_PARQUET]:
+        dst = config.MODELS_DIR / src.name
+        if src.exists() and src.resolve() != dst.resolve():
+            shutil.copy(src, dst)
+            print(f"Copied {src.name} -> models/")
+
     if wandb_run is not None:
         wandb_run.log({
             "test/svd_rmse": svd_rmse,

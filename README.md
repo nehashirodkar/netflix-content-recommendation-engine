@@ -82,8 +82,8 @@ requirements.txt
 
 1. **Hugging Face** — https://huggingface.co/join
    - Create a write-scope token: https://huggingface.co/settings/tokens → New token → role: `write`. Copy and keep it.
-   - Create a model repo: https://huggingface.co/new → name it `netflix-recsys-models` (model type, public). Note the full ID, e.g. `nehashirodkar/netflix-recsys-models`.
-   - Create a Space: https://huggingface.co/new-space → name it `netflix-recsys-demo` → SDK: **Docker** → public. Note the URL, e.g. `https://huggingface.co/spaces/nehashirodkar/netflix-recsys-demo`.
+   - Create a model repo: https://huggingface.co/new → name it `netflix-recsys-models` (model type, public). Note the full ID, e.g. `NehaS98/netflix-recsys-models`.
+   - Create a Space: https://huggingface.co/new-space → name it `netflix-recsys-demo` → SDK: **Docker** → public. Note the URL, e.g. `https://huggingface.co/spaces/NehaS98/netflix-recsys-demo`.
 2. **Weights & Biases** — https://wandb.ai/signup
    - Get your API key: https://wandb.ai/authorize. Copy and keep it.
 
@@ -101,7 +101,7 @@ You should now have:
 2. Runtime → Change runtime type → **T4 GPU**.
 3. Run cells top to bottom. You'll be prompted for:
    - HF token
-   - HF model repo (default: `nehashirodkar/netflix-recsys-models`)
+   - HF model repo (default: `NehaS98/netflix-recsys-models`)
    - W&B API key (leave blank to skip W&B)
 4. The notebook will:
    - Clone the repo
@@ -124,7 +124,7 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 $env:HF_TOKEN = "<your-token>"
-$env:HF_MODEL_REPO = "nehashirodkar/netflix-recsys-models"
+$env:HF_MODEL_REPO = "NehaS98/netflix-recsys-models"
 
 # Pull the trained models you just pushed from Colab
 python -c "from src.utils.hf_hub import pull_models; pull_models()"
@@ -146,12 +146,12 @@ Once models are on HF Hub:
 
 ```powershell
 # Add HF Space as a git remote (one-time)
-git remote add space https://huggingface.co/spaces/nehashirodkar/netflix-recsys-demo
+git remote add space https://huggingface.co/spaces/NehaS98/netflix-recsys-demo
 
 # Set the HF Space's repo secret so it can pull models from your private/public model repo:
 # Go to your Space → Settings → Variables and secrets:
 #   HF_TOKEN        = <your write-scope token>   (Secret)
-#   HF_MODEL_REPO   = nehashirodkar/netflix-recsys-models   (Variable)
+#   HF_MODEL_REPO   = NehaS98/netflix-recsys-models   (Variable)
 
 # Push code to the Space — it auto-builds the Docker image and deploys
 git push space main
@@ -162,7 +162,7 @@ The Space will:
 2. Pull models from your HF Hub model repo at container startup
 3. Start FastAPI on internal :8000, Streamlit on :7860 (the public-facing port)
 
-Once it's live: `https://huggingface.co/spaces/nehashirodkar/netflix-recsys-demo`
+Once it's live: `https://huggingface.co/spaces/NehaS98/netflix-recsys-demo`
 
 ---
 

@@ -70,7 +70,7 @@ WANDB_ENTITY = os.environ.get("WANDB_ENTITY")  # None = personal account
 WANDB_MODE = os.environ.get("WANDB_MODE", "online")  # "disabled" to skip
 
 # Hugging Face Hub
-HF_MODEL_REPO = os.environ.get("HF_MODEL_REPO", "nehashirodkar/netflix-recsys-models")
+HF_MODEL_REPO = os.environ.get("HF_MODEL_REPO", "NehaS98/netflix-recsys-models")
 HF_TOKEN = os.environ.get("HF_TOKEN")
 
 # API

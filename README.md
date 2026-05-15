@@ -10,6 +10,9 @@ pinned: false
 
 # Netflix-Style Recommendation Engine
 
+🔗 **Live demo:** https://huggingface.co/spaces/NehaS98/netflix-recsys-demo
+📦 **Trained models:** https://huggingface.co/NehaS98/netflix-recsys-models
+
 A side-by-side comparison of four recommendation approaches trained on **MovieLens 1M**:
 
 | Model | Type | Library |
